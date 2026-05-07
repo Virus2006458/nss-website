@@ -92,8 +92,8 @@ const Header = () => {
           {/* Auth / Action Buttons */}
           <div className="hidden lg:flex items-center gap-4">
             {!isAuthenticated ? (
-              <Button asChild className="rounded-full bg-primary text-white hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-300 px-6 font-semibold shadow-lg shadow-primary/25">
-                <Link to="/login">Volunteer Login</Link>
+              <Button asChild className="rounded-full bg-primary text-white hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-300 px-8 font-semibold shadow-lg shadow-primary/25">
+                <Link to="/login">Login</Link>
               </Button>
             ) : (
               <>
@@ -167,9 +167,9 @@ const Header = () => {
 
                 <div className="p-6 border-t border-white/10 bg-white/5">
                   {!isAuthenticated ? (
-                    <Button asChild className="w-full rounded-xl bg-white text-background hover:bg-white/90 h-12 text-base font-semibold">
+                    <Button asChild className="w-full rounded-xl bg-primary text-white hover:bg-primary/90 h-12 text-base font-semibold shadow-lg shadow-primary/20">
                       <Link to="/login" onClick={() => setIsOpen(false)}>
-                        Volunteer Login
+                        Login
                       </Link>
                     </Button>
                   ) : (
