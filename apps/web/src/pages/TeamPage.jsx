@@ -61,7 +61,7 @@ const TeamPage = () => {
       const senateRoles = [
         'President', 'Vice President', 'Secretary', 'Joint Secretary', 
         'Treasurer', 'Deputy Treasurer', 'General admin', 'Office Bearer',
-        'Group Captain', 'President-Elect', 'Student Co-ordinator'
+        'Group Captain', 'President-Elect'
       ];
       filtered = teamMembers.filter(m => senateRoles.includes(m.role));
     } else if (activeTab === 'Heads') {
