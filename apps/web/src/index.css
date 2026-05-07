@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Pure Light Foundation */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    
+    /* Semantic Surfaces - Light Blue / White */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    /* Elegant Blue Accents */
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222 47% 11.2%;
+    
+    /* UI Elements */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
+    --radius: 1rem;
+
+    /* Animation & Effect Variables */
+    --transition-fast: 0.2s;
+    --transition-normal: 0.3s;
+    --shadow-glow: 0 10px 25px -5px hsl(var(--primary) / 0.15);
+    --shadow-glow-strong: 0 15px 35px -5px hsl(var(--primary) / 0.25);
+  }
+
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --border: 217 32% 17%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight text-balance;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-blue-100/50 shadow-[0_8px_32px_0_rgba(0,0,0,0.05)];
+  }
+
+  .glass-card {
+    @apply bg-white/50 backdrop-blur-md border border-blue-50/50 shadow-lg;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-primary bg-[length:200%_auto] animate-gradientShift;
+  }
+
+  .gradient-border {
+    position: relative;
+    background: clip-padding-box var(--background);
+    border: solid 1px transparent;
+    border-radius: var(--radius);
+  }
+  
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: -1;
+    margin: -1px;
+    border-radius: inherit;
+    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+  }
+
+  /* Enhanced Hover Effects & Animations */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+  }
+
+  .hover-scale {
+    @apply transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-glow {
+    @apply relative overflow-hidden transition-all duration-300 hover:shadow-lg;
+  }
+
+  .btn-glow::after {
+    content: '';
+    @apply absolute inset-0 bg-primary/10 opacity-0 transition-opacity duration-300;
+  }
+
+  .btn-glow:hover::after {
+    @apply opacity-100;
+  }
+
+  /* Blue Gradient Button Utility */
+  .btn-gradient-pt {
+    @apply bg-gradient-to-r from-blue-600 to-blue-400 text-white border-0 transition-all duration-300 relative overflow-hidden;
+  }
+  
+  .btn-gradient-pt:hover:not(:disabled) {
+    @apply shadow-[0_10px_20px_rgba(37,99,235,0.3)] scale-[1.02];
+  }
+
+  .btn-gradient-pt:active:not(:disabled) {
+    @apply scale-[0.98];
+  }
+
+  .underline-anim {
+    @apply relative inline-block;
+  }
+
+  .underline-anim::after {
+    content: '';
+    @apply absolute w-full h-[2px] bottom-0 left-0 bg-primary origin-bottom-right scale-x-0 transition-transform duration-300 ease-out;
+  }
+
+  .underline-anim:hover::after {
+    @apply origin-bottom-left scale-x-100;
+  }
+
+  .img-zoom-container {
+    @apply relative overflow-hidden rounded-[var(--radius)];
+  }
+
+  .img-zoom {
+    @apply w-full h-full object-cover transition-transform duration-500 ease-out;
+  }
+
+  .img-zoom-container:hover .img-zoom {
+    @apply scale-110;
+  }
+
+  .img-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 transition-opacity duration-300;
+  }
+
+  .img-zoom-container:hover .img-overlay {
+    @apply opacity-100;
+  }
+
+  .ripple {
+    background-position: center;
+    transition: background 0.8s;
+  }
+  .ripple:hover {
+    background: hsl(var(--primary) / 0.8) radial-gradient(circle, transparent 1%, hsl(var(--primary) / 0.8) 1%) center/15000%;
+  }
+  .ripple:active {
+    background-color: hsl(var(--primary));
+    background-size: 100%;
+    transition: background 0s;
+  }
+}
+
+@layer components {
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+  }
+
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px -10px hsl(var(--primary)); }
+    50% { box-shadow: 0 0 30px 5px hsl(var(--primary) / 0.5); }
+  }
+
+  .animate-gradientShift {
+    animation: gradientShift 8s ease infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+}
+
+/* Realistic Indian Flag Wave Background */
+.hero-section {
+  position: relative;
+  overflow: hidden;
+  background-image: url('/indian_flag_bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 0;
+}
+
+/* Keep content above background */
+.hero-content {
+  position: relative;
+  z-index: 2;
+}

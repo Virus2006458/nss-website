@@ -1,0 +1,20 @@
+{
+  "name": "monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix apps/web",
+    "build": "npm run build --prefix apps/web",
+    "start": "echo \"No backend configured\"",
+    "lint": "npm run lint --prefix apps/web"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.5.0",
+    "concurrently": "^9.1.2",
+    "postcss": "^8.5.12",
+    "tailwindcss": "^4.2.4"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}
