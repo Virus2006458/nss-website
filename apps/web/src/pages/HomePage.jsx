@@ -196,7 +196,7 @@ const HomePage = () => {
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-white/10">
             {[
-              { label: 'Active Volunteers', value: '800+' },
+              { label: 'Active Volunteers', value: '150+' },
               { label: 'Service Hours', value: '12k+' },
               { label: 'Communities Served', value: '25+' }
             ].map((stat, i) => (
