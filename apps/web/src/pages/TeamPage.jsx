@@ -40,6 +40,7 @@ const TeamPage = () => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('Senate Members');
+  const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -200,10 +201,20 @@ const TeamPage = () => {
                             <div className="w-full md:w-2/5 aspect-square rounded-[2rem] overflow-hidden border-4 border-primary/20 shadow-lg relative z-10">
                               <img src={member.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=000&color=fff`} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" alt={member.name} />
                             </div>
-                            <div className="w-full md:w-3/5 text-center md:text-left space-y-4">
+                            <div 
+                              className="w-full md:w-3/5 text-center md:text-left space-y-4 cursor-pointer"
+                              onClick={() => setExpandedId(expandedId === member.id ? null : member.id)}
+                            >
                               <h4 className="text-lg md:text-xl font-black text-foreground uppercase tracking-tight leading-tight">OUR <span className="text-primary underline underline-offset-4 decoration-2">{member.role}</span></h4>
                               <div className="inline-block px-4 py-1.5 rounded-lg bg-primary text-white font-bold text-sm tracking-wide border-b-2 border-blue-700 shadow">{member.name}</div>
-                              <p className="text-muted-foreground leading-snug text-sm italic line-clamp-3">"{member.bio || `Leading with vision and dedication.`}"</p>
+                              <p className={`text-muted-foreground leading-snug text-sm italic transition-all duration-300 ${expandedId === member.id ? '' : 'line-clamp-3'}`}>
+                                "{member.bio || `Leading with vision and dedication.`}"
+                              </p>
+                              {member.bio && member.bio.length > 100 && (
+                                <p className="text-[10px] text-primary font-bold uppercase tracking-tighter mt-1">
+                                  {expandedId === member.id ? 'Show less' : 'Click to read more'}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </motion.div>
@@ -251,9 +262,27 @@ const TeamPage = () => {
                           )}
                         </div>
                         <h3 className="text-xl font-black text-foreground mb-1 group-hover:text-primary transition-colors">{member.name}</h3>
-                        <div className="text-xs font-black text-primary uppercase tracking-widest">
+                        <div className="text-xs font-black text-primary uppercase tracking-widest mb-3">
                           {member.role || activeTab}
                         </div>
+                        {member.bio && (
+                          <div 
+                            className="mt-2 cursor-pointer w-full"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedId(expandedId === member.id ? null : member.id);
+                            }}
+                          >
+                            <p className={`text-xs text-muted-foreground italic leading-relaxed transition-all duration-300 ${expandedId === member.id ? '' : 'line-clamp-2'}`}>
+                              "{member.bio}"
+                            </p>
+                            {member.bio.length > 60 && (
+                              <button className="text-[9px] font-bold text-primary uppercase mt-1">
+                                {expandedId === member.id ? 'Less' : 'More'}
+                              </button>
+                            )}
+                          </div>
+                        )}
                       </motion.div>
                     );
                   })}
