@@ -34,7 +34,7 @@ const JoinNSSModal = () => {
       const { error } = await supabase.from('volunteers').insert([{
         name: formData.name,
         rollNumber: formData.rollNumber,
-        dob: formData.dob,
+        dob: formData.dob || null,
         totalHours: 0
       }]);
 
@@ -90,9 +90,9 @@ const JoinNSSModal = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="join-dob" className="text-foreground">Date of Birth <span className="text-destructive">*</span></Label>
+            <Label htmlFor="join-dob" className="text-foreground">Date of Birth (Optional)</Label>
             <Input
-              id="join-dob" name="dob" type="date" required
+              id="join-dob" name="dob" type="date"
               value={formData.dob} onChange={handleChange}
               className="bg-primary/5 border-primary/10 text-foreground focus-visible:ring-primary"
             />

@@ -9,6 +9,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabaseClient';
 
+const ROLE_PRIORITY = {
+  'Office Bearer': 1,
+  'Group Captain': 2,
+  'President': 3,
+  'Vice President': 4,
+  'President-Elect': 5,
+  'Student Co-ordinator': 6,
+  'Secretary': 7,
+  'Joint Secretary': 8,
+  'Treasurer': 9,
+  'Deputy Treasurer': 10,
+  'General admin': 11,
+};
+
+const getRolePriority = (role) => {
+  return ROLE_PRIORITY[role] || 100;
+};
+
 const TeamManagement = () => {
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,8 +37,11 @@ const TeamManagement = () => {
 
   const fetchTeam = async () => {
     try {
-      const { data: records, error } = await supabase.from('team_members').select('*').order('created', { ascending: true });
-      setTeam(records || []);
+      const { data: records, error } = await supabase.from('team_members').select('*');
+      if (error) throw error;
+      
+      const sortedTeam = (records || []).sort((a, b) => getRolePriority(a.role) - getRolePriority(b.role));
+      setTeam(sortedTeam);
     } catch (error) {
       toast.error('Failed to fetch team members');
     } finally {
@@ -159,6 +180,7 @@ const TeamManagement = () => {
               <Select value={formData.designation} onValueChange={v => setFormData({...formData, designation: v})}>
                 <SelectTrigger className="bg-primary/5 border-primary/10 text-foreground"><SelectValue placeholder="Select a role" /></SelectTrigger>
                 <SelectContent className="bg-white border-primary/10 text-foreground">
+                  <SelectItem value="Student Co-ordinator">Student Co-ordinator</SelectItem>
                   <SelectItem value="President">President</SelectItem>
                   <SelectItem value="Vice President">Vice President</SelectItem>
                   <SelectItem value="Secretary">Secretary</SelectItem>

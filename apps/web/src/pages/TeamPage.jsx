@@ -13,6 +13,24 @@ const CATEGORIES = [
   'Coordinator'
 ];
 
+const ROLE_PRIORITY = {
+  'Office Bearer': 1,
+  'Group Captain': 2,
+  'President': 3,
+  'Vice President': 4,
+  'President-Elect': 5,
+  'Student Co-ordinator': 6,
+  'Secretary': 7,
+  'Joint Secretary': 8,
+  'Treasurer': 9,
+  'Deputy Treasurer': 10,
+  'General admin': 11,
+};
+
+const getRolePriority = (role) => {
+  return ROLE_PRIORITY[role] || 100;
+};
+
 const getInitials = (name) => {
   if (!name) return 'NSS';
   return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -38,24 +56,23 @@ const TeamPage = () => {
   }, []);
 
   const filteredMembers = useMemo(() => {
+    let filtered = [];
     if (activeTab === 'Senate Members') {
       const senateRoles = [
         'President', 'Vice President', 'Secretary', 'Joint Secretary', 
         'Treasurer', 'Deputy Treasurer', 'General admin', 'Office Bearer',
-        'Group Captain', 'President-Elect'
+        'Group Captain', 'President-Elect', 'Student Co-ordinator'
       ];
-      return teamMembers.filter(m => senateRoles.includes(m.role));
-    }
-    
-    if (activeTab === 'Heads') {
-      return teamMembers.filter(m => m.role?.toLowerCase().includes('head'));
-    }
-    
-    if (activeTab === 'Leads') {
-      return teamMembers.filter(m => m.role?.toLowerCase().includes('lead'));
+      filtered = teamMembers.filter(m => senateRoles.includes(m.role));
+    } else if (activeTab === 'Heads') {
+      filtered = teamMembers.filter(m => m.role?.toLowerCase().includes('head'));
+    } else if (activeTab === 'Leads') {
+      filtered = teamMembers.filter(m => m.role?.toLowerCase().includes('lead'));
+    } else {
+      filtered = teamMembers.filter(m => m.role?.toLowerCase() === activeTab.toLowerCase());
     }
 
-    return teamMembers.filter(m => m.role?.toLowerCase() === activeTab.toLowerCase());
+    return [...filtered].sort((a, b) => getRolePriority(a.role) - getRolePriority(b.role));
   }, [teamMembers, activeTab]);
 
   return (
@@ -124,15 +141,16 @@ const TeamPage = () => {
           </div>
         ) : (
           <div className="space-y-16">
-            {/* Top Leadership Row (President & VP) */}
+            {/* Top Leadership Row */}
             {activeTab === 'Senate Members' && (
               <motion.div 
                 layout
-                className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8"
               >
                 <AnimatePresence mode="popLayout">
                   {filteredMembers
-                    .filter(m => m.role === 'President' || m.role === 'Vice President')
+                    .filter(m => ['Office Bearer', 'Group Captain', 'President', 'Vice President', 'President-Elect'].includes(m.role))
+                    .sort((a, b) => getRolePriority(a.role) - getRolePriority(b.role))
                     .map((member) => (
                       <motion.div
                         key={member.id}
@@ -186,7 +204,7 @@ const TeamPage = () => {
                 {filteredMembers
                   .filter(m => {
                     if (activeTab === 'Senate Members') {
-                      return m.role !== 'President' && m.role !== 'Vice President';
+                      return !['Office Bearer', 'Group Captain', 'President', 'Vice President', 'President-Elect'].includes(m.role);
                     }
                     return true;
                   })

@@ -15,6 +15,7 @@ const VolunteerManagement = () => {
   const [volunteers, setVolunteers] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Modals state
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
@@ -58,7 +59,7 @@ const VolunteerManagement = () => {
       const { error } = await supabase.from('volunteers').insert([{
         name: volForm.name,
         rollNumber: volForm.rollNumber,
-        dob: volForm.dob,
+        dob: volForm.dob || null,
         role: volForm.role,
         totalHours: 0
       }]);
@@ -92,7 +93,7 @@ const VolunteerManagement = () => {
         .update({
           name: editForm.name,
           rollNumber: editForm.rollNumber,
-          dob: editForm.dob,
+          dob: editForm.dob || null,
           role: editForm.role
         })
         .eq('id', editingVol.id);
@@ -128,15 +129,27 @@ const VolunteerManagement = () => {
       let errorCount = 0;
 
       for (const row of json) {
-        // Look for common column names
-        const name = row['Name'] || row['name'] || row['Full Name'] || row['full name'] || row['Student Name'];
-        const rollNumber = row['Roll Number'] || row['roll number'] || row['Roll No'] || row['Roll No.'] || row['rollno'] || row['Reg No'];
-        const role = row['Role'] || row['role'] || row['Designation'] || 'Volunteer';
+        // Skip empty rows
+        if (Object.values(row).every(v => v === null || v === '')) continue;
+
+        // More robust column finding (case-insensitive and trimmed)
+        const findValue = (row, possibleKeys) => {
+          const keys = Object.keys(row);
+          for (const key of keys) {
+            const cleanKey = key.trim().toLowerCase();
+            if (possibleKeys.some(pk => pk.toLowerCase() === cleanKey)) {
+              return row[key];
+            }
+          }
+          return null;
+        };
+
+        const name = findValue(row, ['Name', 'Full Name', 'Student Name', 'Volunteer Name']);
+        const rollNumber = findValue(row, ['Roll Number', 'Roll No', 'Roll No.', 'Reg No', 'Register Number', 'rollno']);
+        const role = findValue(row, ['Role', 'Designation', 'Position']) || 'Volunteer';
+        let dob = findValue(row, ['DOB', 'Date of Birth']);
         
         // Handle dates properly if Excel converted them to numbers or formatted strings
-        let dob = row['DOB'] || row['dob'] || row['Date of Birth'] || '';
-        
-        // If it's an Excel serial date number
         if (typeof dob === 'number') {
           const jsDate = new Date(Math.round((dob - 25569) * 86400 * 1000));
           dob = jsDate.toISOString().split('T')[0];
@@ -146,7 +159,7 @@ const VolunteerManagement = () => {
           const { error } = await supabase.from('volunteers').insert([{
             name: String(name).trim(),
             rollNumber: String(rollNumber).trim(),
-            dob: dob ? String(dob).trim() : '2000-01-01', // fallback if empty
+            dob: dob ? String(dob).trim() : null,
             role: String(role).trim(),
             totalHours: 0
           }]);
@@ -158,7 +171,10 @@ const VolunteerManagement = () => {
             successCount++;
           }
         } else {
-          errorCount++;
+          // Only count as error if the row wasn't totally empty but missing critical info
+          if (Object.values(row).some(v => v !== '')) {
+            errorCount++;
+          }
         }
       }
 
@@ -296,6 +312,7 @@ const VolunteerManagement = () => {
                 <Select value={volForm.role} onValueChange={v => setVolForm({...volForm, role: v})}>
                   <SelectTrigger className="bg-primary/5 border-primary/10 text-foreground"><SelectValue /></SelectTrigger>
                   <SelectContent className="bg-white border-primary/10 text-foreground">
+                    <SelectItem value="Student Co-ordinator">Student Co-ordinator</SelectItem>
                     <SelectItem value="Logistics Head">Logistics Head</SelectItem>
                     <SelectItem value="Traffic Monitoring Head">Traffic Monitoring Head</SelectItem>
                     <SelectItem value="Media Head">Media Head</SelectItem>
@@ -315,13 +332,33 @@ const VolunteerManagement = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-foreground">Date of Birth *</Label>
-                <Input type="date" required value={volForm.dob} onChange={e => setVolForm({...volForm, dob: e.target.value})} className="bg-primary/5 border-primary/10 text-foreground" />
+                <Label className="text-foreground">Date of Birth</Label>
+                <Input type="date" value={volForm.dob} onChange={e => setVolForm({...volForm, dob: e.target.value})} className="bg-primary/5 border-primary/10 text-foreground" />
               </div>
               <Button type="submit" className="bg-primary hover:bg-primary/90 text-white h-10">
                 <Plus className="w-4 h-4 mr-2" /> Add
               </Button>
             </form>
+          </div>
+          
+          {/* Search Bar */}
+          <div className="flex gap-4">
+            <div className="relative flex-1">
+              <Input 
+                placeholder="Search by name or roll number..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-primary/5 border-primary/10 text-foreground pl-10"
+              />
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              </div>
+            </div>
+            {searchQuery && (
+              <Button variant="ghost" onClick={() => setSearchQuery('')} className="text-muted-foreground">
+                Clear
+              </Button>
+            )}
           </div>
 
           {/* Volunteer List */}
@@ -339,11 +376,16 @@ const VolunteerManagement = () => {
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8">Loading...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8">Loading...</TableCell></TableRow>
                 ) : volunteers.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No volunteers found</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No volunteers found</TableCell></TableRow>
                 ) : (
-                  volunteers.map((vol) => (
+                  volunteers
+                    .filter(vol => 
+                      vol.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                      vol.rollNumber?.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map((vol) => (
                     <TableRow key={vol.id} className="border-primary/5 hover:bg-primary/5">
                       <TableCell className="font-medium text-foreground">{vol.name || '-'}</TableCell>
                       <TableCell className="text-muted-foreground">{vol.rollNumber}</TableCell>
@@ -475,6 +517,7 @@ const VolunteerManagement = () => {
               <Select value={editForm.role} onValueChange={v => setEditForm({...editForm, role: v})}>
                 <SelectTrigger className="bg-primary/5 border-primary/10 text-foreground"><SelectValue /></SelectTrigger>
                 <SelectContent className="bg-white border-primary/10 text-foreground">
+                  <SelectItem value="Student Co-ordinator">Student Co-ordinator</SelectItem>
                   <SelectItem value="Logistics Head">Logistics Head</SelectItem>
                   <SelectItem value="Traffic Monitoring Head">Traffic Monitoring Head</SelectItem>
                   <SelectItem value="Media Head">Media Head</SelectItem>
@@ -494,8 +537,8 @@ const VolunteerManagement = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-foreground">Date of Birth *</Label>
-              <Input type="date" required value={editForm.dob} onChange={e => setEditForm({...editForm, dob: e.target.value})} className="bg-primary/5 border-primary/10 text-foreground" />
+              <Label className="text-foreground">Date of Birth</Label>
+              <Input type="date" value={editForm.dob} onChange={e => setEditForm({...editForm, dob: e.target.value})} className="bg-primary/5 border-primary/10 text-foreground" />
             </div>
             <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white h-12">
               Save Changes
