@@ -155,21 +155,22 @@ const TeamPage = () => {
                           layout
                           initial={{ opacity: 0, y: 30 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="glass-panel rounded-[2.5rem] p-8 md:p-12 border-2 border-primary/10 relative overflow-hidden group shadow-xl max-w-4xl w-full"
+                          className="glass-panel rounded-[2.5rem] p-6 md:p-10 border-2 border-primary/10 relative overflow-hidden group shadow-xl max-w-3xl w-full"
                         >
                           <div className="absolute top-6 right-6 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black text-primary tracking-[0.2em] uppercase z-20">
                             EST. {member.tag || '2025'}
                           </div>
-                          <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
-                            <div className="w-full md:w-1/2 aspect-square rounded-[2rem] overflow-hidden border-4 border-primary/20 shadow-xl relative z-10">
+                          <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center">
+                            <div className="w-full md:w-2/5 aspect-square rounded-[2rem] overflow-hidden border-4 border-primary/20 shadow-xl relative z-10">
                               <img src={member.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=000&color=fff`} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" alt={member.name} />
                             </div>
-                            <div className="w-full md:w-1/2 text-center md:text-left space-y-6">
-                              <div className="space-y-1">
-                                <h4 className="text-xl md:text-2xl font-black text-foreground uppercase tracking-tight leading-tight">MEET OUR <span className="text-primary underline decoration-4 underline-offset-8">{member.role}</span></h4>
+                            <div className="w-full md:w-3/5 text-center md:text-left space-y-4">
+                              <div className="space-y-0">
+                                <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Meet our</p>
+                                <h4 className="text-2xl md:text-3xl font-black text-primary uppercase tracking-tight leading-tight">{member.role}</h4>
                               </div>
-                              <div className="inline-block px-6 py-2.5 rounded-xl bg-primary text-white font-black text-lg tracking-wider border-b-4 border-blue-700 shadow-lg transform -rotate-1">{member.name}</div>
-                              <p className="text-muted-foreground leading-relaxed text-lg font-medium italic">"{member.bio || `Leading with vision and dedication to drive the NSS mission forward and inspire our volunteers.`}"</p>
+                              <div className="inline-block px-5 py-2 rounded-xl bg-primary text-white font-black text-lg tracking-wider border-b-4 border-blue-700 shadow-lg transform -rotate-1">{member.name}</div>
+                              <p className="text-muted-foreground leading-relaxed text-base font-medium italic">"{member.bio || `Leading with vision and dedication.`}"</p>
                             </div>
                           </div>
                           <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
