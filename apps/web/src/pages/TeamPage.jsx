@@ -201,7 +201,10 @@ const TeamPage = () => {
                               <img src={member.image_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=000&color=fff`} className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" alt={member.name} />
                             </div>
                             <div className="w-full md:w-3/5 text-center md:text-left space-y-4">
-                              <h4 className="text-lg md:text-xl font-black text-foreground uppercase tracking-tight leading-tight">OUR <span className="text-primary underline underline-offset-4 decoration-2">{member.role}</span></h4>
+                              <div className="space-y-0">
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Meet our</p>
+                                <h4 className="text-lg md:text-xl font-black text-foreground uppercase tracking-tight leading-tight"><span className="text-primary underline underline-offset-4 decoration-2">{member.role}</span></h4>
+                              </div>
                               <div className="inline-block px-4 py-1.5 rounded-lg bg-primary text-white font-bold text-sm tracking-wide border-b-2 border-blue-700 shadow">{member.name}</div>
                               <p className="text-muted-foreground leading-snug text-sm italic transition-all duration-500 line-clamp-3 group-hover:line-clamp-none">
                                 "{member.bio || `Leading with vision and dedication.`}"
