@@ -30,7 +30,7 @@ const AboutPage = () => {
   ];
 
   const stats = [
-    { value: '847', label: 'Active Volunteers', color: 'text-primary' },
+    { value: '150', label: 'Active Volunteers', color: 'text-primary' },
     { value: '12,400', label: 'Service Hours', color: 'text-primary' },
     { value: '63', label: 'Events Organized', color: 'text-primary' },
     { value: '28', label: 'Communities Served', color: 'text-primary' }

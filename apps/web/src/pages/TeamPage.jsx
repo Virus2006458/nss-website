@@ -41,7 +41,8 @@ const TeamPage = () => {
     if (activeTab === 'Senate Members') {
       const senateRoles = [
         'President', 'Vice President', 'Secretary', 'Joint Secretary', 
-        'Treasurer', 'Deputy Treasurer', 'General admin'
+        'Treasurer', 'Deputy Treasurer', 'General admin', 'Office Bearer',
+        'Group Captain', 'President-Elect'
       ];
       return teamMembers.filter(m => senateRoles.includes(m.role));
     }

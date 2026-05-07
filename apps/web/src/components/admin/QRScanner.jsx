@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 import { CheckCircle, XCircle, Loader2, Camera, ShieldCheck } from 'lucide-react';
@@ -9,26 +9,57 @@ const QRScanner = () => {
   const [scanResult, setScanResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isScannerStarted, setIsScannerStarted] = useState(false);
 
   useEffect(() => {
-    const scanner = new Html5QrcodeScanner('reader', {
-      fps: 10,
-      qrbox: { width: 250, height: 250 },
-    });
+    const html5QrCode = new Html5Qrcode("reader");
+    
+    const startScanner = async () => {
+      try {
+        await html5QrCode.start(
+          { facingMode: "environment" }, 
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+          },
+          onScanSuccess,
+          onScanError
+        );
+        setIsScannerStarted(true);
+      } catch (err) {
+        console.error("Unable to start scanning.", err);
+        // Fallback to any camera if environment is not found
+        try {
+          await html5QrCode.start(
+            { facingMode: "user" },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            onScanSuccess,
+            onScanError
+          );
+          setIsScannerStarted(true);
+        } catch (err2) {
+          setError("Could not start camera. Please ensure permissions are granted.");
+        }
+      }
+    };
 
-    scanner.render(onScanSuccess, onScanError);
+    startScanner();
 
     function onScanSuccess(decodedText) {
-      scanner.clear();
-      handleVerify(decodedText);
+      html5QrCode.stop().then(() => {
+        setIsScannerStarted(false);
+        handleVerify(decodedText);
+      }).catch(err => console.error(err));
     }
 
     function onScanError(err) {
-      // console.warn(err);
+      // Ignored
     }
 
     return () => {
-      scanner.clear().catch(e => console.error("Failed to clear scanner", e));
+      if (html5QrCode.isScanning) {
+        html5QrCode.stop().catch(e => console.error("Failed to stop scanner", e));
+      }
     };
   }, []);
 
