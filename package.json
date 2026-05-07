@@ -16,5 +16,8 @@
   },
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }
