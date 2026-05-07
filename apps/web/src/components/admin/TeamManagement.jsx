@@ -195,7 +195,6 @@ const TeamManagement = () => {
                   <SelectItem value="Photography Lead">Photography Lead</SelectItem>
                   <SelectItem value="Videography Lead">Videography Lead</SelectItem>
                   <SelectItem value="Design Lead">Design Lead</SelectItem>
-                  <SelectItem value="Coordinator">Coordinator</SelectItem>
                   <SelectItem value="Office Bearer">Office Bearer</SelectItem>
                   <SelectItem value="Group Captain">Group Captain</SelectItem>
                   <SelectItem value="President-Elect">President-Elect</SelectItem>

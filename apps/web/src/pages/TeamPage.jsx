@@ -10,7 +10,7 @@ const CATEGORIES = [
   'Senate Members',
   'Heads',
   'Leads',
-  'Coordinator'
+  'Student Co-ordinator'
 ];
 
 const ROLE_PRIORITY = {
