@@ -40,6 +40,7 @@ const TeamPage = () => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('Senate Members');
+  const [selectedYear, setSelectedYear] = useState(null);
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -56,24 +57,30 @@ const TeamPage = () => {
   }, []);
 
   const filteredMembers = useMemo(() => {
-    let filtered = [];
+    let filtered = teamMembers;
+
+    if (selectedYear) {
+      filtered = filtered.filter(m => m.tag === selectedYear);
+    }
+
+    let categoryFiltered = [];
     if (activeTab === 'Senate Members') {
       const senateRoles = [
         'President', 'Vice President', 'Secretary', 'Joint Secretary', 
         'Treasurer', 'Deputy Treasurer', 'General admin', 'Office Bearer',
         'Group Captain', 'President-Elect'
       ];
-      filtered = teamMembers.filter(m => senateRoles.includes(m.role));
+      categoryFiltered = filtered.filter(m => senateRoles.includes(m.role));
     } else if (activeTab === 'Heads') {
-      filtered = teamMembers.filter(m => m.role?.toLowerCase().includes('head'));
+      categoryFiltered = filtered.filter(m => m.role?.toLowerCase().includes('head'));
     } else if (activeTab === 'Leads') {
-      filtered = teamMembers.filter(m => m.role?.toLowerCase().includes('lead'));
+      categoryFiltered = filtered.filter(m => m.role?.toLowerCase().includes('lead'));
     } else {
-      filtered = teamMembers.filter(m => m.role?.toLowerCase() === activeTab.toLowerCase());
+      categoryFiltered = filtered.filter(m => m.role?.toLowerCase() === activeTab.toLowerCase());
     }
 
-    return [...filtered].sort((a, b) => getRolePriority(a.role) - getRolePriority(b.role));
-  }, [teamMembers, activeTab]);
+    return [...categoryFiltered].sort((a, b) => getRolePriority(a.role) - getRolePriority(b.role));
+  }, [teamMembers, activeTab, selectedYear]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -97,6 +104,32 @@ const TeamPage = () => {
             The dedicated individuals leading our mission and inspiring positive change.
           </p>
         </motion.div>
+
+        {/* Year Tabs */}
+        <div className="flex justify-center mb-6">
+          <div className="flex flex-wrap justify-center gap-2 bg-primary/5 border border-primary/10 p-1.5 rounded-full backdrop-blur-md max-w-4xl">
+            {['All', '2026', '2027', '2028'].map(year => (
+              <button
+                key={year}
+                onClick={() => setSelectedYear(year === 'All' ? null : year)}
+                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 relative ${
+                  (selectedYear === year || (year === 'All' && !selectedYear)) 
+                    ? 'text-white' 
+                    : 'text-muted-foreground hover:text-primary hover:bg-primary/5'
+                }`}
+              >
+                {(selectedYear === year || (year === 'All' && !selectedYear)) && (
+                  <motion.div
+                    layoutId="activeYearIndicator"
+                    className="absolute inset-0 bg-primary rounded-full shadow-[0_0_15px_rgba(0,163,255,0.4)]"
+                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <span className="relative z-10">{year === 'All' ? 'All Batches' : `Batch ${year}`}</span>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Pill-shaped Tabs */}
         <div className="flex justify-center mb-16">

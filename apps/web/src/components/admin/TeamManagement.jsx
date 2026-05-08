@@ -201,6 +201,18 @@ const TeamManagement = () => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="space-y-2">
+              <Label className="text-foreground">Year / Batch *</Label>
+              <Select value={formData.tag} onValueChange={v => setFormData({...formData, tag: v})}>
+                <SelectTrigger className="bg-primary/5 border-primary/10 text-foreground"><SelectValue placeholder="Select Year" /></SelectTrigger>
+                <SelectContent className="bg-white border-primary/10 text-foreground">
+                  <SelectItem value="2025">2025</SelectItem>
+                  <SelectItem value="2026">2026</SelectItem>
+                  <SelectItem value="2027">2027</SelectItem>
+                  <SelectItem value="2028">2028</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             {(formData.designation === 'President' || formData.designation === 'Vice President') && (
               <div className="space-y-2 p-4 bg-primary/5 rounded-xl border border-primary/10 animate-in fade-in slide-in-from-top-2">
                 <Label className="text-primary font-bold">Signature Styling (Bio) *</Label>
@@ -212,17 +224,7 @@ const TeamManagement = () => {
                   className="bg-primary/5 border-primary/10 text-foreground focus:border-primary" 
                   rows={3} 
                 />
-                <div className="space-y-2">
-                  <Label className="text-primary font-bold">Established Year (EST.) *</Label>
-                  <Input 
-                    required 
-                    placeholder="e.g. 2025"
-                    value={formData.tag} 
-                    onChange={e => setFormData({...formData, tag: e.target.value})} 
-                    className="bg-primary/5 border-primary/10 text-foreground" 
-                  />
-                </div>
-                <p className="text-[10px] text-primary/70 italic">This will be displayed as "EST. [Year]" on the premium spotlight section.</p>
+                <p className="text-[10px] text-primary/70 italic">This bio will be displayed on the premium spotlight section. The selected Year will be displayed as "EST. [Year]".</p>
               </div>
             )}
             <div className="space-y-2">
